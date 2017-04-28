@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			.main {
+				width: 100%;
+				height: 500px;
+				;
+				background: #ccc;
+			}
+			
+			#container {
+				width: 800px;
+				height: 400px;
+				margin: 0 auto;
+			}
+		</style>
+		<script type="text/javascript" src="js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="js/highcharts.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				$.ajax({
+					method: "GET",
+					url: "json/index.json",
+				}).done(function(data) {
+					//                  var jsondata = eval("('+data+')");
+					//                  var jsondata=$.parseJSON(data);
+
+					$('#container').highcharts({
+						chart: {
+							backgroundColor: 'white',
+							events: {
+								load: function() {
+									// Draw the flow chart
+									var ren = this.renderer,
+										colors = Highcharts.getOptions().colors,
+										leftbranch = ['M', 0, 0, 'L', 0, 30, 'M', 0, 0, 'L', 15, 0, 'M', 0, 30, 'L', 15, 30],
+										rightbranch = ['M', 15, 0, 'L', 15, 30, 'M', 0, 0, 'L', 15, 0, 'M', 0, 30, 'L', 15, 30],
+										way = ['M', 0, 0, 'L', 45, 0, ],
+										gray = "#D8D8D8";
+									
+									var measure={
+										big:{
+											r: 60,
+											fontsize: 18
+										},
+										middle:{
+											r: 40,
+											fontsize: 16
+										},
+										small:{
+											r:30,
+											fontsize: 14
+										},
+										message: {
+											w: 200,
+											h: 36
+										}
+									}
+									
+									//发起方
+									var x = 0,
+										y = 0;
+
+									function addNode(nodes) {
+										for(var node of nodes) {
+											// 绘制记录
+											if(node.hasOwnProperty("message")) {
+												addMessage(node.message, x, y)
+												x += 100;
+											}
+											// 绘制当前节点
+											addPeople(node, x, y)
+											x += 100;
+											// 绘制子节点
+											if(node.hasOwnProperty("children")) {
+												console.log(11)
+												addNode(node.children)
+											}
+										}
+										// y轴累加
+										x = 0;
+										y += 100;
+									};
+
+									function addPeople(node, parentX, parentY) {
+										var r = measure.small.r
+										if(node.hasOwnProperty("size")&&measure.hasOwnProperty(node.size)){
+											r = measure[node.size].r
+										}
+										ren.label(node.name, x, y)
+											.attr({
+												fill: '#81BBFA',
+												stroke: 'white',
+												padding: r,
+												r: '100%',
+											})
+											.css({
+												color: 'white',
+												background: 'red'
+											})
+											.add()
+									}
+
+									function addMessage(nodeList, parentX, parentY) {
+										var x = parentX,
+											y = parentY;
+										for(node of nodeList) {
+											ren.label(node.name, x, y)
+												.attr({
+													fill: '#DDEDFF',
+													stroke: '#DDEDFF',
+													'stroke-width': 2,
+													width: 100,
+													'text-align': 'center'
+												})
+												.css({
+													fontSize: '10px',
+													color: '#6D6E6F',
+												})
+												.add();
+											y += 30
+										}
+									}
+									// 初始化
+									(function() {
+										addNode(data);
+									})()
+
+									//									//发起方到中间人记录的路径
+									//									ren.path(['M', 135, 230, 'L', 160, 230, 'M', 160, 230, 'L', 160, 100, 'M', 160, 100, "L", 185, 100])
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray
+									//										})
+									//										.add();
+									//									ren.path(leftbranch)
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray,
+									//
+									//										})
+									//										.translate(185, 85)
+									//										.add();
+									//
+									//									//发起人到中间人的记录
+									//									ren.label(data.overview[0].figure[0].message.call_log, 200, 75)
+									//										.attr({
+									//											fill: '#DDEDFF',
+									//											stroke: '#DDEDFF',
+									//											width: 100,
+									//											'text-align': 'center'
+									//										})
+									//										.css({
+									//											fontSize: '10px',
+									//											color: '#6D6E6F',
+									//										})
+									//										.add();
+									//									ren.label(data.overview[0].figure[0].message.trading_record, 200, 105)
+									//										.attr({
+									//											fill: '#DDEDFF',
+									//											stroke: '#DDEDFF',
+									//											'stroke-width': 2,
+									//											width: 100,
+									//											'text-align': 'center'
+									//										})
+									//										.css({
+									//											fontSize: '10px',
+									//											color: '#6D6E6F',
+									//										})
+									//										.add();
+									//
+									//									//记录经过中间人的路径
+									//									ren.path(rightbranch)
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray,
+									//
+									//										})
+									//										.translate(305, 85)
+									//										.add();
+									//
+									//									ren.path(way)
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray,
+									//
+									//										})
+									//										.translate(320, 100)
+									//										.add();
+									//									//中间人
+									//									ren.label(data.overview[0].figure[0].name, 370, 70)
+									//										.attr({
+									//											fill: "#4C91DD",
+									//											height: 30,
+									//											padding: 14,
+									//											r: 100,
+									//											"text-align": "center",
+									//										})
+									//										.css({
+									//											fontSize: "10px",
+									//											color: 'white',
+									//
+									//										})
+									//										.add()
+									//										//中间人到目标方记录的路径
+									//									ren.path(way)
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray,
+									//
+									//										})
+									//										.translate(430, 100)
+									//										.add();
+									//									//中间人到目标方的记录
+									//									ren.label('通话21次', 470, 90)
+									//										.attr({
+									//											fill: '#DDEDFF',
+									//											stroke: 'white',
+									//											width: 100,
+									//											'text-align': 'center'
+									//										})
+									//										.css({
+									//											fontSize: '10px',
+									//											color: '#6D6E6F',
+									//										})
+									//										.add();
+									//									//记录到目标方的路径
+									//									ren.path(way)
+									//										.attr({
+									//											'stroke-width': 2,
+									//											stroke: gray,
+									//
+									//										})
+									//										.translate(575, 100)
+									//										.add();
+									//									//目标方
+									//									ren.label('赵鑫', 620, 75)
+									//										.attr({
+									//											fill: "#81BBFA",
+									//											stroke: 'white',
+									//											padding: 15,
+									//											r: 50,
+									//										})
+									//										.css({
+									//											color: 'white',
+									//											background: 'red'
+									//										})
+									//										.add()
+								}
+							}
+						},
+						title: {
+							text: '张三（440402198475123547）中间人分析',
+							style: {
+								color: 'black'
+							}
+						}
+					});
+				});
+			});
+		</script>
+		<!---->
+	</head>
+
+	<body>
+		<div class="main">
+			<div id="container"></div>
+
+		</div>
+	</body>
+
+</html>

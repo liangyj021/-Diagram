@@ -1,0 +1,69 @@
+[
+	{
+		"_comment": "中间人页面，type: begin 发起方，middle 中间方，end 目标方，call_log 通话记录，trading_record 银行交易",
+		"type": "begin",
+		"name": "张三",
+		"size": "big",
+		"children": [
+			{
+				"type": "middle",
+				"name": "李明",
+				"size": "middle",
+				"message": [
+					{
+						"type": "call_log",
+						"name": "李明通话35次"
+					}, {
+						"type": "trading_record",
+						"name": "李明交易金额50000元"
+					}
+				],
+				"children": [
+					{
+						"type": "end",
+						"name": "赵信",
+						"size": "small",
+						"message": [
+							{
+								"type": "call_log",
+								"name": "赵信通话35次"
+							}, {
+								"type": "trading_record",
+								"name": "赵信交易金额50000元"
+							}
+						]
+					}
+				]
+			},{
+				"type": "middle",
+				"name": "李明",
+				"size": "middle",
+				"message": [
+					{
+						"type": "call_log",
+						"name": "李明通话35次"
+					}, {
+						"type": "trading_record",
+						"name": "李明交易金额50000元"
+					}
+				],
+				"children": [
+					{
+						"type": "end",
+						"name": "赵信",
+						"size": "small",
+						"message": [
+							{
+								"type": "call_log",
+								"name": "赵信通话35次"
+							}, {
+								"type": "trading_record",
+								"name": "赵信交易金额50000元"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]
